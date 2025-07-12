@@ -19,7 +19,7 @@ A set of AutoHotkey v2.0 macros for Bethesda's Starfield, designed to automate a
 | F12         | Invisibility (Void Form)| Toggle invisibility. Uses '9' as shortcut.  |
 | F6          | Hold Shift              | (Reserved for future use)                   |
 
-### Flight Mode Adjustments (while active)
+### Flight Mode Adjustments (while active) These keys need to be held down to take effect
 - **Up/Down:** Increase/Decrease flight time
 - **NumpadPgUp/PgDn:** Increase/Decrease delay time
 - **NumpadEnd/Left/Home:** Preset gravities (Low/Medium/High)
