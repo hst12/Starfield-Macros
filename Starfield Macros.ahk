@@ -27,7 +27,7 @@ InvisibilityKey := 9
 
 ; Flight Parameters
 MaxFlightTime := 5000 ; Maximum flight time in ms
-MinFlightTime := 250 ; Minimum flight time in ms
+MinFlightTime := 500 ; Minimum flight time in ms
 FlightStep := 250 ; Step size for flight time adjustment in ms
 FlightWaitTime := 500 ; Wait time after flight before checking toggle again
 DefaultFlightTime := 3000 ; Default flight time in ms
@@ -84,6 +84,30 @@ ShowStatus(msg)
     SetTimer(() => ToolTip(), -2000)
 }
 
+NumpadEnd:: ; Low Preset
+{
+    global FlightTime, FlightWaitTime
+    FlightTime := MinFlightTime
+    FlightWaitTime := MaxFlightWaitTime
+    ShowStatus("Low")
+}
+
+NumpadLeft:: ; Medium Preset
+{
+    global FlightTime, FlightWaitTime
+    FlightTime := MaxFlightTime / 2
+    FlightWaitTime := MinFlightWaitTime+DelayStep
+    ShowStatus("Medium")
+}
+
+NumpadHome:: ; High Preset
+{
+    global FlightTime, FlightWaitTime
+    FlightTime := MaxFlightTime
+    FlightWaitTime := MinFlightWaitTime
+    ShowStatus("High")
+}
+
 *F7:: Flight() ; Vehicle Flight Mode
 ; This function toggles flight mode on and off, allowing for extended flight duration in vehicles. Requires a suitably modded vehicle.
 
@@ -131,10 +155,9 @@ Flight()
 
             ShowStatus("Flight Time: " . flightTime / 1000 . " seconds" . "Flight Wait Time: " . FlightWaitTime / 1000 .
                 " seconds") ; display current flight time
-            ;ShowStatus("Flight Wait Time: " . FlightWaitTime / 1000 . " seconds") ; display current flight time
         }
 
-        if GetKeyState("NumpadPgDn", "P") ; Reduce delay time
+        if GetKeyState("NumpadPgUp", "P") ; Reduce delay time
         {
             if FlightWaitTime > MinFlightWaitTime
                 FlightWaitTime := FlightWaitTime - DelayStep ; reduce flight time
@@ -143,7 +166,7 @@ Flight()
             ShowStatus("Flight Wait Time: " . FlightWaitTime / 1000 . " seconds") ; display current flight time
         }
 
-        if GetKeyState("NumpadPgUp", "P") ; Increase delay time
+        if GetKeyState("NumpadPgDn", "P") ; Increase delay time
         {
             if FlightWaitTime < MaxFlightWaitTime
                 FlightWaitTime := FlightWaitTime + DelayStep ; increase flight time
@@ -152,28 +175,25 @@ Flight()
             ShowStatus("Flight Wait Time: " . FlightWaitTime / 1000 . " seconds") ; display current flight time
         }
 
-        if GetKeyState("NumpadEnd", "P") ; Low Grav
+        if GetKeyState("NumpadEnd", "P") ; Low Preset
         {
             FlightTime := MinFlightTime
             FlightWaitTime := MaxFlightWaitTime
-            ShowStatus("Flight Time reset to " . FlightTime / 1000 . " seconds" . "Flight Wait Time reset to " .
-                FlightWaitTime / 1000 . " seconds") ; display current flight time
+            ShowStatus("Low")
         }
 
-        if GetKeyState("NumpadLeft", "P") ; Medium Grav
+        if GetKeyState("NumpadLeft", "P") ; Medium Preset
         {
             FlightTime := MaxFlightTime /2 
             FlightWaitTime := MaxFlightWaitTime /2
-            ShowStatus("Flight Time reset to " . FlightTime / 1000 . " seconds" . "Flight Wait Time reset to " .
-                FlightWaitTime / 1000 . " seconds") ; display current flight time
+            ShowStatus("Medium")
         }
 
-        if GetKeyState("NumpadHome", "P") ; High Grav
+        if GetKeyState("NumpadHome", "P") ; High Preset
         {
             FlightTime := MaxFlightTime
             FlightWaitTime := MinFlightWaitTime
-            ShowStatus("Flight Time reset to " . FlightTime / 1000 . " seconds" . "Flight Wait Time reset to " .
-                FlightWaitTime / 1000 . " seconds") ; display current flight time
+            ShowStatus("High")
         }
 
         Send("{LShift Down}") ; Hold down Left Shift
@@ -182,7 +202,7 @@ Flight()
 
         Sleep flightTime ; Keep keys held down for x seconds
         Send("{Space Up}") ; Release Space
-        Send("{LShift Up}") ; Release Shift
+        ;Send("{LShift Up}") ; Release Shift
 
         Sleep(FlightWaitTime) ; Wait for FlightWaitTime seconds before checking the toggle again
 
@@ -190,6 +210,7 @@ Flight()
         if !toggle
         {
             ShowStatus("Flight Mode Off")
+            Send("{LShift Up}") ; Release Shift
             return ; end the function
         }
 
