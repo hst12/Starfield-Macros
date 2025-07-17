@@ -3,14 +3,14 @@
 ; Some macros for Starfield - WIP
 
 #HotIf WinActive("ahk_exe Starfield.exe") ; Run only if Starfield is active
+#SingleInstance Force        ;Run only one instance
 
 /*
 Hotkeys
 Reactive Shield = F2 - re-casts every x seconds. Effectively God mode at NG+10. Assumes '6' key is defined for Reactive Shield shortcut
+Hold Shift = F6
 Vehicle Flight = F7 - "Flight" mode for vehicles with infinite or extended boost
 Invisibility = F12 - Void Form. Assumes '9' key is defined for Void Form shortcut
-Hold Shift = F6
-
 
 Adjust parameters below as required. Delay in ms before re-casting. The timings are for NG+10
 */
@@ -42,7 +42,13 @@ FlightTime := DefaultFlightTime ; Set initial flight time to default
 SetKeyDelay 50, 50
 SendMode("Event")
 
-F2:: ; Reactive Shield
+ShowStatus(msg)
+{
+    ToolTip(msg, A_ScreenWidth - 200, A_ScreenHeight - 60) ; Display at bottom right hand corner of screen
+    SetTimer(() => ToolTip(), -2000)
+}
+
+*F2:: ; Reactive Shield
 {
     static toggle := false
     SetTimer(Shield, 30 * (toggle ^= 1))
@@ -50,17 +56,42 @@ F2:: ; Reactive Shield
         ShowStatus("Shield On")
     else
         ShowStatus("Shield Off")
-}
-Shield()
-{
-    Sleep(50)
-    SendEvent(ReactiveShieldKey) ; Reactive key shortcut
-    Sleep(100)
-    SendEvent('z') ; Activate power
-    Sleep(ShieldTime)
+
+    Shield()
+    {
+        Sleep(50)
+        SendEvent(ReactiveShieldKey) ; Reactive key shortcut
+        Sleep(100)
+        SendEvent('z') ; Activate power
+        Sleep(ShieldTime)
+    }
 }
 
-F12:: ; Invisibility
+*F6:: ; Hold Shift
+{
+    static ShiftToggle := false
+    ShiftToggle := !ShiftToggle ; Toggle the state of Shift
+
+    if ShiftToggle
+    {
+        SendEvent("{LShift Down}") ; Hold down Left Shift
+        ShowStatus("Shift Held")
+    }
+    else
+    {
+        SendEvent("{LShift Up}") ; Release Left Shift
+        ShowStatus("Shift Released")
+    }
+}
+
+*F11:: ;Release any held keys
+{
+    Send("{LShift Up}") ; Release Shift
+    Send("{Space Up}") ; Release Space
+    ShowStatus("Keys Released")
+}
+
+*F12:: ; Invisibility
 {
     static toggle := false
     SetTimer(Invisibility, 30 * (toggle ^= 1))
@@ -68,23 +99,18 @@ F12:: ; Invisibility
         ShowStatus("Invisibility On")
     else
         ShowStatus("Invisibility Off")
-}
-Invisibility()
-{
-    Sleep(50)
-    SendEvent(InvisibilityKey) ; Void Form shortcut
-    Sleep(100)
-    SendEvent('z') ; Activate power
-    Sleep(InvisibilityTime)
+
+    Invisibility()
+    {
+        Sleep(50)
+        SendEvent(InvisibilityKey) ; Void Form shortcut
+        Sleep(100)
+        SendEvent('z') ; Activate power
+        Sleep(InvisibilityTime)
+    }
 }
 
-ShowStatus(msg)
-{
-    ToolTip(msg, A_ScreenWidth - 200, A_ScreenHeight - 60) ; Display at bottom right hand corner of screen
-    SetTimer(() => ToolTip(), -2000)
-}
-
-NumpadEnd:: ; Low Preset
+*NumpadEnd:: ; Low Preset
 {
     global FlightTime, FlightWaitTime
     FlightTime := MinFlightTime
@@ -92,15 +118,15 @@ NumpadEnd:: ; Low Preset
     ShowStatus("Low")
 }
 
-NumpadLeft:: ; Medium Preset
+*NumpadLeft:: ; Medium Preset
 {
     global FlightTime, FlightWaitTime
     FlightTime := MaxFlightTime / 2
-    FlightWaitTime := MinFlightWaitTime+DelayStep
+    FlightWaitTime := MinFlightWaitTime + DelayStep
     ShowStatus("Medium")
 }
 
-NumpadHome:: ; High Preset
+*NumpadHome:: ; High Preset
 {
     global FlightTime, FlightWaitTime
     FlightTime := MaxFlightTime
@@ -184,8 +210,8 @@ Flight()
 
         if GetKeyState("NumpadLeft", "P") ; Medium Preset
         {
-            FlightTime := MaxFlightTime /2 
-            FlightWaitTime := MaxFlightWaitTime /2
+            FlightTime := MaxFlightTime / 2
+            FlightWaitTime := MaxFlightWaitTime / 2
             ShowStatus("Medium")
         }
 
@@ -202,8 +228,6 @@ Flight()
 
         Sleep flightTime ; Keep keys held down for x seconds
         Send("{Space Up}") ; Release Space
-        ;Send("{LShift Up}") ; Release Shift
-
         Sleep(FlightWaitTime) ; Wait for FlightWaitTime seconds before checking the toggle again
 
         ; check if the toggle is off to run post-conditions and end the function early
