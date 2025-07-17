@@ -1,15 +1,16 @@
 #Requires AutoHotkey v2.0
 
-; Some macros for Starfield - WIP
+; Some macros for Starfield
 
 #HotIf WinActive("ahk_exe Starfield.exe") ; Run only if Starfield is active
-#SingleInstance Force        ;Run only one instance
+#SingleInstance Force ;Run only one instance
 
 /*
 Hotkeys
 Reactive Shield = F2 - re-casts every x seconds. Effectively God mode at NG+10. Assumes '6' key is defined for Reactive Shield shortcut
 Hold Shift = F6
 Vehicle Flight = F7 - "Flight" mode for vehicles with infinite or extended boost
+Release any held keys = F11 - releases Shift and Space
 Invisibility = F12 - Void Form. Assumes '9' key is defined for Void Form shortcut
 
 Adjust parameters below as required. Delay in ms before re-casting. The timings are for NG+10
@@ -21,7 +22,7 @@ Adjust parameters below as required. Delay in ms before re-casting. The timings 
 ShieldTime := 16000
 InvisibilityTime := 45000
 
-; Keys
+; Keys - adjust as required
 ReactiveShieldKey := 6
 InvisibilityKey := 9
 
@@ -42,10 +43,35 @@ FlightTime := DefaultFlightTime ; Set initial flight time to default
 SetKeyDelay 50, 50
 SendMode("Event")
 
-ShowStatus(msg)
+ShowStatus(msg) ; Status messages
 {
     ToolTip(msg, A_ScreenWidth - 200, A_ScreenHeight - 60) ; Display at bottom right hand corner of screen
-    SetTimer(() => ToolTip(), -2000)
+    SetTimer(() => ToolTip(), -2000) ; Remove tooltip after 2 seconds
+}
+
+; Flight Presets
+*NumpadEnd:: ; Low Preset
+{
+    global FlightTime, FlightWaitTime
+    FlightTime := MinFlightTime
+    FlightWaitTime := MaxFlightWaitTime
+    ShowStatus("Low")
+}
+
+*NumpadLeft:: ; Medium Preset
+{
+    global FlightTime, FlightWaitTime
+    FlightTime := MaxFlightTime / 2
+    FlightWaitTime := MinFlightWaitTime + DelayStep
+    ShowStatus("Medium")
+}
+
+*NumpadHome:: ; High Preset
+{
+    global FlightTime, FlightWaitTime
+    FlightTime := MaxFlightTime
+    FlightWaitTime := MinFlightWaitTime
+    ShowStatus("High")
 }
 
 *F2:: ; Reactive Shield
@@ -108,30 +134,6 @@ ShowStatus(msg)
         SendEvent('z') ; Activate power
         Sleep(InvisibilityTime)
     }
-}
-
-*NumpadEnd:: ; Low Preset
-{
-    global FlightTime, FlightWaitTime
-    FlightTime := MinFlightTime
-    FlightWaitTime := MaxFlightWaitTime
-    ShowStatus("Low")
-}
-
-*NumpadLeft:: ; Medium Preset
-{
-    global FlightTime, FlightWaitTime
-    FlightTime := MaxFlightTime / 2
-    FlightWaitTime := MinFlightWaitTime + DelayStep
-    ShowStatus("Medium")
-}
-
-*NumpadHome:: ; High Preset
-{
-    global FlightTime, FlightWaitTime
-    FlightTime := MaxFlightTime
-    FlightWaitTime := MinFlightWaitTime
-    ShowStatus("High")
 }
 
 *F7:: Flight() ; Vehicle Flight Mode
