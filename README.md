@@ -12,12 +12,18 @@ A set of AutoHotkey v2.0 macros for Bethesda's Starfield, designed to automate a
 
 ## Hotkeys
 
-| Hotkey      | Function                | Notes                                       |
-|-------------|-------------------------|---------------------------------------------|
-| F2          | Reactive Shield         | Toggle auto-recast. Uses '6' as shortcut.   |
-| F7          | Vehicle Flight Mode     | Toggle flight mode. Adjustable parameters.  |
-| F12         | Invisibility (Void Form)| Toggle invisibility. Uses '9' as shortcut.  |
-| F6          | Hold Shift              | Holds down the Left Shift key               |
+
+
+| Hotkey                 | Function                            | Notes                                       |
+|------------------------|-------------------------------------|---------------------------------------------|
+| Numpad Home, Left, End |Flight presets, High, Medium and low | Select before activating Flight mode        |
+| F2                     | Reactive Shield                     | Toggle auto-recast. Uses '6' as shortcut.   |
+| F6                     | Hold Shift                          | Holds down the Left Shift key               |
+| F7                     | Vehicle Flight Mode                 | Toggle flight mode. Adjustable parameters.  |
+| F11                    | Release Shft and Space              | Unstick any held down keys                  |
+| F12                    | Invisibility (Void Form)            | Toggle invisibility. Uses '9' as shortcut.  |
+
+---
 
 ### Flight Mode Adjustments (while active) These keys need to be held down to take effect
 - **Up/Down:** Increase/Decrease flight time
@@ -26,7 +32,7 @@ A set of AutoHotkey v2.0 macros for Bethesda's Starfield, designed to automate a
 
 ## Requirements
 - [AutoHotkey v2.0](https://www.autohotkey.com/)
-- Starfield (PC)
+- Starfield (PC - Steam or Xbox)
 
 ## Usage
 1. Download or copy `Starfield Macros.ahk` to your PC.
