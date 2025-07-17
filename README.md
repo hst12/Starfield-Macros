@@ -12,12 +12,12 @@ A set of AutoHotkey v2.0 macros for Bethesda's Starfield, designed to automate a
 
 ## Hotkeys
 
-| Hotkey      | Function                | Notes                                      |
+| Hotkey      | Function                | Notes                                       |
 |-------------|-------------------------|---------------------------------------------|
 | F2          | Reactive Shield         | Toggle auto-recast. Uses '6' as shortcut.   |
 | F7          | Vehicle Flight Mode     | Toggle flight mode. Adjustable parameters.  |
 | F12         | Invisibility (Void Form)| Toggle invisibility. Uses '9' as shortcut.  |
-| F6          | Hold Shift              | (Reserved for future use)                   |
+| F6          | Hold Shift              | Holds down the Left Shift key               |
 
 ### Flight Mode Adjustments (while active) These keys need to be held down to take effect
 - **Up/Down:** Increase/Decrease flight time
