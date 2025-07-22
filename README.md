@@ -5,7 +5,7 @@ A set of AutoHotkey v2.0 macros for Bethesda's Starfield, designed to automate a
 ## Features
 
 - **Reactive Shield (F2):** Automatically recasts the shield every X seconds. (Assumes '6' key is set for the shield power.)
-- **Vehicle Flight Mode (F7):** Enables extended or infinite boost for vehicles. Adjustable flight and delay times.
+- **Vehicle Flight Mode (F7):** Enables "flight" mode for vehciles with extended or infinite boost. Adjustable flight and delay times.
 - **Invisibility (F12):** Toggles Void Form for stealth. (Assumes '9' key is set for Void Form.)
 - **Status Tooltips:** On-screen notifications for macro status and parameter changes.
 - **Parameter Adjustment:** Change flight time and delay on the fly using arrow and numpad keys.
