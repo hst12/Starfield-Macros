@@ -1,6 +1,7 @@
 # Starfield Macros (AutoHotkey)
 
 A set of AutoHotkey v2.0 macros for Bethesda's Starfield, designed to automate and enhance gameplay with features like reactive shield recasting, vehicle flight mode, and invisibility toggling.
+Since these macros run outside of the game engine, achievements aren't affected.
 
 ## Features
 
