@@ -44,7 +44,7 @@ A set of AutoHotkey v2.0 macros for Bethesda's Starfield, designed to automate a
 - Adjust timing and key parameters at the top of the script as needed for your playstyle or NG+ level.
 
 ## Disclaimer
-Use at your own risk. This script is provided as-is and is intended for single-player use only.
+Use at your own risk. This script is provided as-is.
 
 ---
 
