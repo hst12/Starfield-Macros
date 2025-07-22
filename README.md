@@ -37,7 +37,7 @@ A set of AutoHotkey v2.0 macros for Bethesda's Starfield, designed to automate a
 ## Usage
 1. Download or copy `Starfield Macros.ahk` to your PC.
 2. Set your in-game power shortcuts to match the script (default: '6' for shield, '9' for Void Form).
-3. Run the script with AutoHotkey v2.0.
+3. Run the script with AutoHotkey v2.0 or create a compiled version
 4. Use the hotkeys in-game while Starfield is the active window.
 
 ## Customization
