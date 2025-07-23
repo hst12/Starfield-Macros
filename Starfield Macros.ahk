@@ -74,6 +74,76 @@ ShowStatus(msg) ; Status messages
     ShowStatus("High")
 }
 
+*NumpadRight:: ; Minimum Flight Wait Time
+{
+    global FlightWaitTime
+
+    FlightWaitTime := MinFlightWaitTime ; Set minimum flight wait time
+    ShowStatus("Flight Wait Time Minimum")
+}
+
+*Numpad5:: ; Show Flight Parameters
+{
+    global FlightTime, FlightWaitTime
+    ShowStatus("Flight Time: " . FlightTime / 1000 . " seconds" . " | Flight Wait Time: " . FlightWaitTime / 1000 .
+        " seconds") ; display current flight time and wait time
+}
+
+*NumpadPgup:: ; Reduce delay time
+{
+    global FlightWaitTime
+    if FlightWaitTime > MinFlightWaitTime
+        FlightWaitTime := FlightWaitTime - DelayStep ; reduce flight time
+    else
+        FlightWaitTime := MinFlightWaitTime ; set minimum flight delay time
+    ShowStatus("Flight Wait Time: " . FlightWaitTime / 1000 . " seconds") ; display current flight time
+
+}
+
+*NumpadPgdn:: ; Increase delay time
+{
+    global FlightWaitTime
+    if FlightWaitTime < MaxFlightWaitTime
+        FlightWaitTime := FlightWaitTime + DelayStep ; increase flight time
+    else
+        FlightWaitTime := MaxFlightWaitTime ; set maximum flight delay time
+    ShowStatus("Flight Wait Time: " . FlightWaitTime / 1000 . " seconds") ; display current flight time
+}
+
+*NumpadUp:: ; Increase boost time
+{
+    global flightTime, FlightWaitTime
+    if flightTime < MaxFlightTime
+    {
+        flightTime := flightTime + FlightStep ; increase flight time by 1 second if the Up key is pressed
+        FlightWaitTime := FlightWaitTime - DelayStep ; increase flight wait time by 1 second
+        if FlightWaitTime < MinFlightWaitTime
+            FlightWaitTime := MinFlightWaitTime ; ensure wait time does not go below minimum
+    }
+    else
+        flightTime := MaxFlightTime ; reset to default flight time if neither key is pressed
+
+    ShowStatus("Flight Time: " . flightTime / 1000 . " seconds" . "Flight Wait Time: " . FlightWaitTime / 1000 .
+        " seconds") ; display current flight time
+}
+
+*NumpadDown:: ; Reduce boost time
+{
+    global flightTime, FlightWaitTime
+    if flightTime > MinFlightTime
+    {
+        flightTime := flightTime - FlightStep ; reduce flight time by 1 second if the Down key is pressed
+        FlightWaitTime := FlightWaitTime + DelayStep ; increase flight wait time by 1 second
+        if FlightWaitTime > MaxFlightWaitTime
+            FlightWaitTime := MaxFlightWaitTime ; ensure wait time does not go above maximum
+    }
+    else
+        flightTime := MinFlightTime ; set minimum flight time to 1 second
+
+    ShowStatus("Flight Time: " . flightTime / 1000 . " seconds" . "Flight Wait Time: " . FlightWaitTime / 1000 .
+        " seconds") ; display current flight time
+}
+
 *F2:: ; Reactive Shield
 {
     static toggle := false
@@ -114,6 +184,9 @@ ShowStatus(msg) ; Status messages
 {
     Send("{LShift Up}") ; Release Shift
     Send("{Space Up}") ; Release Space
+    SetCapsLockState false
+    SetNumLockState false
+    SetScrollLockState false
     ShowStatus("Keys Released")
 }
 
@@ -141,7 +214,7 @@ ShowStatus(msg) ; Status messages
 
 Flight()
 {
-    global FlightTime, FlightWaitTime
+    global flightTime, FlightWaitTime
     static toggle := false ; declare the toggle
     toggle := !toggle ; flip the toggle
     if toggle
@@ -152,7 +225,7 @@ Flight()
 
     selfRunningInterruptibleSeq()
     {
-        if GetKeyState("Down", "P")  ; Reduce boost time
+        /*if GetKeyState("Down", "P")  ; Reduce boost time
         {
             if flightTime > MinFlightTime
             {
@@ -224,6 +297,13 @@ Flight()
             ShowStatus("High")
         }
 
+        if GetKeyState("NumpadRight", "P") ; Minimum Flight Wait Time
+        {
+            FlightWaitTime := MinFlightWaitTime
+            ShowStatus("Minimum Flight Wait Time")
+        }
+            */
+
         Send("{LShift Down}") ; Hold down Left Shift
         Sleep(100)
         Send("{Space Down}") ; Hold down Space
@@ -245,9 +325,9 @@ Flight()
         {
             SetTimer(selfRunningInterruptibleSeq, -1) ; go again if the toggle is still active
         }
-        else
-        {
-            Tooltip ; remove the tooltip
-        }
+        /*        else
+                {
+                    Tooltip ; remove the tooltip
+        }*/
     }
 }
