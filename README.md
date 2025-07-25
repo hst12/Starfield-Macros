@@ -26,7 +26,7 @@ Since these macros run outside of the game engine, achievements aren't affected.
 
 ---
 
-### Flight Mode Adjustments (while active) These keys need to be held down to take effect
+### Flight Mode Adjustments (while active)
 - **Up/Down:** Increase/Decrease flight time
 - **NumpadPgUp/PgDn:** Increase/Decrease delay time
 - **NumpadEnd/Left/Home:** Preset gravities (Low/Medium/High)
