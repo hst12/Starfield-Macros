@@ -225,85 +225,6 @@ Flight()
 
     selfRunningInterruptibleSeq()
     {
-        /*if GetKeyState("Down", "P")  ; Reduce boost time
-        {
-            if flightTime > MinFlightTime
-            {
-                flightTime := flightTime - FlightStep ; reduce flight time by 1 second if the Down key is pressed
-                FlightWaitTime := FlightWaitTime + DelayStep ; increase flight wait time by 1 second
-                if FlightWaitTime > MaxFlightWaitTime
-                    FlightWaitTime := MaxFlightWaitTime ; ensure wait time does not go above maximum
-            }
-            else
-                flightTime := MinFlightTime ; set minimum flight time to 1 second
-
-            ShowStatus("Flight Time: " . flightTime / 1000 . " seconds" . "Flight Wait Time: " . FlightWaitTime / 1000 .
-                " seconds") ; display current flight time
-            ;ShowStatus("Flight Wait Time: " . FlightWaitTime / 1000 . " seconds") ; display current flight time
-        }
-
-        if GetKeyState("Up", "P") ; Increase boost time
-        {
-            if flightTime < MaxFlightTime
-            {
-                flightTime := flightTime + FlightStep ; increase flight time by 1 second if the Up key is pressed
-                FlightWaitTime := FlightWaitTime - DelayStep ; increase flight wait time by 1 second
-                if FlightWaitTime < MinFlightWaitTime
-                    FlightWaitTime := MinFlightWaitTime ; ensure wait time does not go below minimum
-            }
-            else
-                flightTime := MaxFlightTime ; reset to default flight time if neither key is pressed
-
-            ShowStatus("Flight Time: " . flightTime / 1000 . " seconds" . "Flight Wait Time: " . FlightWaitTime / 1000 .
-                " seconds") ; display current flight time
-        }
-
-        if GetKeyState("NumpadPgUp", "P") ; Reduce delay time
-        {
-            if FlightWaitTime > MinFlightWaitTime
-                FlightWaitTime := FlightWaitTime - DelayStep ; reduce flight time
-            else
-                FlightWaitTime := MinFlightWaitTime ; set minimum flight delay time
-            ShowStatus("Flight Wait Time: " . FlightWaitTime / 1000 . " seconds") ; display current flight time
-        }
-
-        if GetKeyState("NumpadPgDn", "P") ; Increase delay time
-        {
-            if FlightWaitTime < MaxFlightWaitTime
-                FlightWaitTime := FlightWaitTime + DelayStep ; increase flight time
-            else
-                FlightWaitTime := MaxFlightWaitTime ; set maximum flight delay time
-            ShowStatus("Flight Wait Time: " . FlightWaitTime / 1000 . " seconds") ; display current flight time
-        }
-
-        if GetKeyState("NumpadEnd", "P") ; Low Preset
-        {
-            FlightTime := MinFlightTime
-            FlightWaitTime := MaxFlightWaitTime
-            ShowStatus("Low")
-        }
-
-        if GetKeyState("NumpadLeft", "P") ; Medium Preset
-        {
-            FlightTime := MaxFlightTime / 2
-            FlightWaitTime := MaxFlightWaitTime / 2
-            ShowStatus("Medium")
-        }
-
-        if GetKeyState("NumpadHome", "P") ; High Preset
-        {
-            FlightTime := MaxFlightTime
-            FlightWaitTime := MinFlightWaitTime
-            ShowStatus("High")
-        }
-
-        if GetKeyState("NumpadRight", "P") ; Minimum Flight Wait Time
-        {
-            FlightWaitTime := MinFlightWaitTime
-            ShowStatus("Minimum Flight Wait Time")
-        }
-            */
-
         Send("{LShift Down}") ; Hold down Left Shift
         Sleep(100)
         Send("{Space Down}") ; Hold down Space
@@ -325,9 +246,5 @@ Flight()
         {
             SetTimer(selfRunningInterruptibleSeq, -1) ; go again if the toggle is still active
         }
-        /*        else
-                {
-                    Tooltip ; remove the tooltip
-        }*/
     }
 }
