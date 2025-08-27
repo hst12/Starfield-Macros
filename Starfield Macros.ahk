@@ -30,10 +30,10 @@ InvisibilityKey := 9
 MaxFlightTime := 2000 ; Maximum flight time in ms
 MinFlightTime := 100 ; Minimum flight time in ms
 FlightStep := 100 ; Step size for flight time adjustment in ms
-FlightWaitTime := 500 ; Wait time after flight before checking toggle again
+DelayTime := 500 ; Wait time after flight before checking toggle again
 DefaultFlightTime := 2000 ; Default flight time in ms
-MinFlightWaitTime := 0 ; Minimum wait time in ms
-MaxFlightWaitTime := 3000 ; Maximum wait time in ms
+MinDelayTime := 0 ; Minimum wait time in ms
+MaxDelayTime := 3000 ; Maximum wait time in ms
 DelayStep := 100 ; Step size for delay time adjustment in ms
 FlightTime := DefaultFlightTime ; Set initial flight time to default
 
@@ -49,105 +49,109 @@ ShowStatus(msg) ; Status messages
     SetTimer(() => ToolTip(), -5000) ; Remove tooltip after 5 seconds
 }
 
+ShowParams(msg)
+{
+    global FlightTime, DelayTime
+    ShowStatus(msg . " - Vertical Boost: " . FlightTime . " ms " . " | Delay: " . DelayTime . " ms") ; display current flight time and wait time
+}
+
 ; Flight Presets
 *NumpadEnd:: ; Low Preset
 {
-    global FlightTime, FlightWaitTime
-    FlightTime := MinFlightTime
-    FlightWaitTime := MaxFlightWaitTime
-    ShowStatus("Low Preset")
+    global FlightTime, DelayTime
+    FlightTime := MinFlightTime + 200
+    DelayTime := MaxDelayTime
+    ShowParams("Low Preset ")
 }
 
 *NumpadLeft:: ; Medium Preset
 {
-    global FlightTime, FlightWaitTime
+    global FlightTime, DelayTime
     FlightTime := MaxFlightTime // 2
-    FlightWaitTime := MinFlightWaitTime + DelayStep
-    ShowStatus("Medium Preset")
+    DelayTime := MaxDelayTime // 2
+    ShowParams("Medium Preset ")
 }
 
 *NumpadHome:: ; High Preset
 {
-    global FlightTime, FlightWaitTime
+    global FlightTime, DelayTime
     FlightTime := MaxFlightTime
-    FlightWaitTime := MinFlightWaitTime
-    ShowStatus("High Preset")
+    DelayTime := MinDelayTime
+    ShowParams("High Preset ")
 }
 
 *NumpadRight:: ; Minimum Flight Wait Time
 {
-    global FlightWaitTime
+    global DelayTime
 
-    FlightWaitTime := MinFlightWaitTime ; Set minimum flight wait time
-    ShowStatus("Flight Delay Minimum")
+    DelayTime := MinDelayTime ; Set minimum flight wait time
+    ShowParams("Flight Delay Minimum")
 }
 
-*Numpad5:: ; Show Flight Parameters
+*NumpadMult:: ; Show Flight Parameters
 {
-    global FlightTime, FlightWaitTime
-    ShowStatus("Vertical Boost: " . FlightTime . " ms " . " | Delay: " . FlightWaitTime .
-        " ms") ; display current flight time and wait time
+    ShowParams("Flight Parameters")
 }
 
 *NumpadPgup:: ; Reduce delay time
 {
-    global FlightWaitTime
-    if FlightWaitTime > MinFlightWaitTime
-        FlightWaitTime := FlightWaitTime - DelayStep ; reduce flight time
+    global DelayTime
+    if DelayTime > MinDelayTime
+        DelayTime := DelayTime - DelayStep ; reduce flight time
     else
-        FlightWaitTime := MinFlightWaitTime ; set minimum flight delay time
-    ShowStatus("Delay: " . FlightWaitTime . " ms") ; display current flight time
+        DelayTime := MinDelayTime ; set minimum flight delay time
+    ShowStatus("Delay: " . DelayTime . " ms") ; display current flight time
 }
 
 *NumpadPgdn:: ; Increase delay time
 {
-    global FlightWaitTime
-    if FlightWaitTime < MaxFlightWaitTime
-        FlightWaitTime := FlightWaitTime + DelayStep ; increase flight time
+    global DelayTime
+    if DelayTime < MaxDelayTime
+        DelayTime := DelayTime + DelayStep ; increase flight time
     else
-        FlightWaitTime := MaxFlightWaitTime ; set maximum flight delay time
-    ShowStatus("Delay: " . FlightWaitTime . " ms") ; display current flight time
+        DelayTime := MaxDelayTime ; set maximum flight delay time
+    ShowStatus("Delay: " . DelayTime . " ms") ; display current flight time
 }
 
 *NumpadUp:: ; Increase boost time
 {
-    global flightTime, FlightWaitTime
+    global flightTime, DelayTime
     if flightTime < MaxFlightTime
     {
-        flightTime := flightTime + FlightStep ; increase flight time by 1 second if the Up key is pressed
-        FlightWaitTime := FlightWaitTime - DelayStep ; increase flight wait time by 1 second
-        if FlightWaitTime < MinFlightWaitTime
-            FlightWaitTime := MinFlightWaitTime ; ensure wait time does not go below minimum
+        flightTime := flightTime + FlightStep ; increase flight time
+        DelayTime := DelayTime - DelayStep ; increase flight wait time
+        if DelayTime < MinDelayTime
+            DelayTime := MinDelayTime ; ensure wait time does not go below minimum
     }
     else
         flightTime := MaxFlightTime ; reset to default flight time if neither key is pressed
 
-    ShowStatus("Vertical Boost: " . flightTime . " ms " . "Delay: " . FlightWaitTime .
+    ShowStatus("Vertical Boost: " . flightTime . " ms " . "Delay: " . DelayTime .
         " ms") ; display current flight time
 }
 
-*NumpadDown:: ; Reduce boost time
+*NumpadDown:: ; Decrease boost time
 {
-    global flightTime, FlightWaitTime
+    global flightTime, DelayTime
     if flightTime > MinFlightTime
     {
-        flightTime := flightTime - FlightStep ; reduce flight time by 1 second if the Down key is pressed
-        FlightWaitTime := FlightWaitTime + DelayStep ; increase flight wait time by 1 second
-        if FlightWaitTime > MaxFlightWaitTime
-            FlightWaitTime := MaxFlightWaitTime ; ensure wait time does not go above maximum
+        flightTime := flightTime - FlightStep ; reduce flight time
+        DelayTime := DelayTime + DelayStep ; increase flight wait time
+        if DelayTime > MaxDelayTime
+            DelayTime := MaxDelayTime ; ensure wait time does not go above maximum
     }
     else
         flightTime := MinFlightTime ; set minimum flight time to 1 second
 
-    ShowStatus("Vertical Boost: " . flightTime . " ms " . "Delay: " . FlightWaitTime .
+    ShowStatus("Vertical Boost: " . flightTime . " ms " . "Delay: " . DelayTime .
         " ms") ; display current flight time
 }
 
 *F2:: ; Reactive Shield
 {
-    static toggle := false
-    SetTimer(Shield, 30 * (toggle ^= 1))
-    if toggle
+    static ReactiveToggle := false
+    SetTimer(Shield, 30 * (ReactiveToggle ^= 1))
+    if ReactiveToggle
         ShowStatus("Shield On")
     else
         ShowStatus("Shield Off")
@@ -159,6 +163,23 @@ ShowStatus(msg) ; Status messages
         Sleep(100)
         SendEvent('z') ; Activate power
         Sleep(ShieldTime)
+    }
+}
+
+*F3:: ; Hold Space
+{
+    static SpaceToggle := false
+    SpaceToggle := !SpaceToggle ; Toggle the state of Space
+
+    if SpaceToggle
+    {
+        SendEvent("{Space Down}") ; Hold down Space
+        ShowStatus("Space Held")
+    }
+    else
+    {
+        SendEvent("{Space Up}") ; Release Space
+        ShowStatus("Space Released")
     }
 }
 
@@ -213,7 +234,7 @@ ShowStatus(msg) ; Status messages
 
 Flight()
 {
-    global flightTime, FlightWaitTime
+    global flightTime, DelayTime
     static toggle := false ; declare the toggle
     toggle := !toggle ; flip the toggle
     if toggle
@@ -225,12 +246,11 @@ Flight()
     selfRunningInterruptibleSeq()
     {
         Send("{LShift Down}") ; Hold down Left Shift
-        ;Sleep(100)
         Send("{Space Down}") ; Hold down Space
 
-        Sleep flightTime ; Keep keys held down for x seconds
+        Sleep flightTime ; Keep space key held down for DelayTime ms
         Send("{Space Up}") ; Release Space
-        Sleep(FlightWaitTime) ; Wait for FlightWaitTime seconds before checking the toggle again
+        Sleep(DelayTime) ; Wait for DelayTime seconds before checking the toggle again
 
         ; check if the toggle is off to run post-conditions and end the function early
         if !toggle
