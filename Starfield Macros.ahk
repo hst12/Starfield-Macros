@@ -30,10 +30,10 @@ InvisibilityKey := 9
 MaxFlightTime := 2000 ; Maximum flight time in ms
 MinFlightTime := 100 ; Minimum flight time in ms
 FlightStep := 100 ; Step size for flight time adjustment in ms
-DelayTime := 500 ; Wait time after flight before checking toggle again
 DefaultFlightTime := 2000 ; Default flight time in ms
 MinDelayTime := 0 ; Minimum wait time in ms
-MaxDelayTime := 3000 ; Maximum wait time in ms
+MaxDelayTime := 2000 ; Maximum wait time in ms
+DelayTime := MinDelayTime ; Wait time after flight before checking toggle again
 DelayStep := 100 ; Step size for delay time adjustment in ms
 FlightTime := DefaultFlightTime ; Set initial flight time to default
 
