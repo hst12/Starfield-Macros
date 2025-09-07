@@ -174,12 +174,12 @@ ShowParams(msg)
     if SpaceToggle
     {
         SendEvent("{Space Down}") ; Hold down Space
-        ShowStatus("Space Held")
+        ShowStatus("Vertical Boost On")
     }
     else
     {
         SendEvent("{Space Up}") ; Release Space
-        ShowStatus("Space Released")
+        ShowStatus("Vertical Boost Off")
     }
 }
 
@@ -191,12 +191,12 @@ ShowParams(msg)
     if ShiftToggle
     {
         SendEvent("{LShift Down}") ; Hold down Left Shift
-        ShowStatus("Shift Held")
+        ShowStatus("Horizontal Boost On")
     }
     else
     {
         SendEvent("{LShift Up}") ; Release Left Shift
-        ShowStatus("Shift Released")
+        ShowStatus("Horizontal Boost Off")
     }
 }
 
