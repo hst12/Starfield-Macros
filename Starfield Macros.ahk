@@ -67,8 +67,8 @@ ShowParams(msg)
 *NumpadLeft:: ; Medium Preset
 {
     global FlightTime, DelayTime
-    FlightTime := MaxFlightTime // 2
-    DelayTime := MaxDelayTime // 2
+    FlightTime := MaxFlightTime - (MaxFlightTime // 5)
+    DelayTime := MaxDelayTime - (MaxDelayTime // 2)
     ShowParams("Medium Preset ")
 }
 
