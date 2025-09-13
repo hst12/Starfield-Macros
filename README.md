@@ -32,6 +32,7 @@ Since these macros run outside of the game engine, achievements aren't affected.
 - **Up/Down:** Increase/Decrease flight time
 - **NumpadPgUp/PgDn:** Increase/Decrease delay time
 - **NumpadEnd/Left/Home:** Preset gravities (Low/Medium/High)
+- **NumpadRight:** Flight delay zero
 
 ## Requirements
 - [AutoHotkey v2.0](https://www.autohotkey.com/)
