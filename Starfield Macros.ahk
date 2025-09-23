@@ -27,7 +27,7 @@ ReactiveShieldKey := 6
 InvisibilityKey := 9
 
 ; Flight Parameters
-MaxFlightTime := 2000 ; Maximum flight time in ms
+MaxFlightTime := 1000 ; Maximum flight time in ms
 MinFlightTime := 100 ; Minimum flight time in ms
 FlightStep := 100 ; Step size for flight time adjustment in ms
 DefaultFlightTime := 2000 ; Default flight time in ms
@@ -68,7 +68,7 @@ ShowParams(msg)
 {
     global FlightTime, DelayTime
     FlightTime := MaxFlightTime - (MaxFlightTime // 5)
-    DelayTime := MaxDelayTime - (MaxDelayTime // 2)
+    DelayTime := MaxDelayTime // 4
     ShowParams("Medium Preset ")
 }
 
