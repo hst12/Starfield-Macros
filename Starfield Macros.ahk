@@ -34,7 +34,7 @@ DefaultFlightTime := 2000 ; Default flight time in ms
 MinDelayTime := 0 ; Minimum wait time in ms
 MaxDelayTime := 2000 ; Maximum wait time in ms
 DelayTime := MinDelayTime ; Wait time after flight before checking toggle again
-DelayStep := 100 ; Step size for delay time adjustment in ms
+DelayStep := 50 ; Step size for delay time adjustment in ms
 FlightTime := DefaultFlightTime ; Set initial flight time to default
 
 ; End of parameters, start of code below
