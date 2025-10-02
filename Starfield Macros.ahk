@@ -29,7 +29,7 @@ InvisibilityKey := 9
 ; Flight Parameters
 MaxFlightTime := 1000 ; Maximum flight time in ms
 MinFlightTime := 100 ; Minimum flight time in ms
-FlightStep := 100 ; Step size for flight time adjustment in ms
+FlightStep := 50 ; Step size for flight time adjustment in ms
 DefaultFlightTime := 2000 ; Default flight time in ms
 MinDelayTime := 0 ; Minimum wait time in ms
 MaxDelayTime := 2000 ; Maximum wait time in ms
@@ -78,6 +78,27 @@ ShowParams(msg)
     FlightTime := MaxFlightTime
     DelayTime := MinDelayTime
     ShowParams("High Preset ")
+}
+
+*F4:: ; Continuous Boost (Space + Shift)
+{
+    static MaxToggle := false
+    MaxToggle := !MaxToggle ; Toggle the state of Space/Shift
+
+    if MaxToggle
+    {
+        SendEvent("{Space Down}") ; Hold down Space
+        SendEvent("{LShift Down}") ; Hold down Left Shift
+        ShowStatus("Continuous Boost")
+    }
+    else
+    {
+        SendEvent("{Space Up}") ; Release Space
+        SendEvent("{LShift Up}") ; Release Left Shift
+
+        ShowStatus("Continuous Boost Off")
+    }
+
 }
 
 *NumpadRight:: ; Minimum Flight Wait Time
