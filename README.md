@@ -84,7 +84,7 @@ Since these macros run outside of the game engine, achievements aren't affected.
 
 Use at your own risk. This script is provided as-is.
 
----
+***
 
 Contributions and suggestions welcome!
 
