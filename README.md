@@ -72,19 +72,15 @@ Since these macros run outside of the game engine, achievements aren't affected.
 
 * Adjust timing and key parameters at the top of the script as needed for your playstyle or NG+ level.
 
-###### 
+___
 
-###### ---
-
-
-
-###### Disclaimer
+##### Disclaimer
 
 
 
 Use at your own risk. This script is provided as-is.
 
-***
+___
 
 Contributions and suggestions welcome!
 
