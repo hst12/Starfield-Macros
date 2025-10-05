@@ -33,7 +33,9 @@ Since these macros run outside of the game engine, achievements aren't affected.
 | F7                     | Vehicle Flight Mode                  | Toggle flight mode. Adjustable parameters.  |
 | F11                    | Release Shft and Space               | Unstick any held down keys                  |
 | F12                    | Invisibility (Void Form)             | Toggle invisibility. Uses '9' as shortcut.  |
-| Numeric Keypad \*       | Show flight parameters               |                                             |
+| Numeric Keypad /       | Store flight parameters              |                                             |
+| Numeric Keypad *       | Show flight parameters               |                                             |
+| Numeric Keypad -       | Recall flight parameters             |                                             |
 
 
 

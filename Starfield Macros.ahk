@@ -36,6 +36,8 @@ MaxDelayTime := 2000 ; Maximum wait time in ms
 DelayTime := MinDelayTime ; Wait time after flight before checking toggle again
 DelayStep := 50 ; Step size for delay time adjustment in ms
 FlightTime := DefaultFlightTime ; Set initial flight time to default
+StoredFlightTime := FlightTime
+StoredDelayTime := DelayTime
 
 ; End of parameters, start of code below
 ; ======================================
@@ -49,8 +51,7 @@ ShowStatus(msg) ; Status messages
     SetTimer(() => ToolTip(), -5000) ; Remove tooltip after 5 seconds
 }
 
-ShowParams(msg)
-{
+ShowParams(msg) {
     global FlightTime, DelayTime
     ShowStatus(msg . " - Vertical Boost: " . FlightTime . " ms " . " | Delay: " . DelayTime . " ms") ; display current flight time and wait time
 }
@@ -85,14 +86,12 @@ ShowParams(msg)
     static MaxToggle := false
     MaxToggle := !MaxToggle ; Toggle the state of Space/Shift
 
-    if MaxToggle
-    {
+    if MaxToggle {
         SendEvent("{Space Down}") ; Hold down Space
         SendEvent("{LShift Down}") ; Hold down Left Shift
         ShowStatus("Continuous Boost")
     }
-    else
-    {
+    else {
         SendEvent("{Space Up}") ; Release Space
         SendEvent("{LShift Up}") ; Release Left Shift
 
@@ -112,6 +111,23 @@ ShowParams(msg)
 *NumpadMult:: ; Show Flight Parameters
 {
     ShowParams("Flight Parameters")
+}
+
+*NumpadDiv:: ; Store flight parameters
+{
+    global StoredFlightTime, StoredDelayTime, FlightTime, DelayTime
+
+    StoredFlightTime := FlightTime
+    StoredDelayTime := DelayTime
+    ShowStatus("Flight Parameters Stored")
+}
+*NumpadSub:: ; Recall stored flight parameters
+{
+    global StoredFlightTime, StoredDelayTime, FlightTime, DelayTime
+
+    FlightTime := StoredFlightTime
+    DelayTime := StoredDelayTime
+    ShowStatus("Flight Parameters Recalled")
 }
 
 *NumpadPgup:: ; Reduce delay time
@@ -137,8 +153,7 @@ ShowParams(msg)
 *NumpadUp:: ; Increase boost time
 {
     global flightTime, DelayTime
-    if flightTime < MaxFlightTime
-    {
+    if flightTime < MaxFlightTime {
         flightTime := flightTime + FlightStep ; increase flight time
         DelayTime := DelayTime - DelayStep ; increase flight wait time
         if DelayTime < MinDelayTime
@@ -154,8 +169,7 @@ ShowParams(msg)
 *NumpadDown:: ; Decrease boost time
 {
     global flightTime, DelayTime
-    if flightTime > MinFlightTime
-    {
+    if flightTime > MinFlightTime {
         flightTime := flightTime - FlightStep ; reduce flight time
         DelayTime := DelayTime + DelayStep ; increase flight wait time
         if DelayTime > MaxDelayTime
@@ -177,8 +191,7 @@ ShowParams(msg)
     else
         ShowStatus("Shield Off")
 
-    Shield()
-    {
+    Shield() {
         Sleep(50)
         SendEvent(ReactiveShieldKey) ; Reactive key shortcut
         Sleep(100)
@@ -192,13 +205,11 @@ ShowParams(msg)
     static SpaceToggle := false
     SpaceToggle := !SpaceToggle ; Toggle the state of Space
 
-    if SpaceToggle
-    {
+    if SpaceToggle {
         SendEvent("{Space Down}") ; Hold down Space
         ShowStatus("Vertical Boost On")
     }
-    else
-    {
+    else {
         SendEvent("{Space Up}") ; Release Space
         ShowStatus("Vertical Boost Off")
     }
@@ -209,13 +220,11 @@ ShowParams(msg)
     static ShiftToggle := false
     ShiftToggle := !ShiftToggle ; Toggle the state of Shift
 
-    if ShiftToggle
-    {
+    if ShiftToggle {
         SendEvent("{LShift Down}") ; Hold down Left Shift
         ShowStatus("Horizontal Boost On")
     }
-    else
-    {
+    else {
         SendEvent("{LShift Up}") ; Release Left Shift
         ShowStatus("Horizontal Boost Off")
     }
@@ -240,8 +249,7 @@ ShowParams(msg)
     else
         ShowStatus("Invisibility Off")
 
-    Invisibility()
-    {
+    Invisibility() {
         Sleep(50)
         SendEvent(InvisibilityKey) ; Void Form shortcut
         Sleep(100)
@@ -253,19 +261,16 @@ ShowParams(msg)
 *F7:: Flight() ; Vehicle Flight Mode
 ; This function toggles flight mode on and off, allowing for extended flight duration in vehicles. Requires a suitably modded vehicle.
 
-Flight()
-{
+Flight() {
     global flightTime, DelayTime
     static toggle := false ; declare the toggle
     toggle := !toggle ; flip the toggle
-    if toggle
-    {
+    if toggle {
         ShowStatus("Flight Mode On")
         SetTimer(selfRunningInterruptibleSeq, -1) ; run the function once immediately
     }
 
-    selfRunningInterruptibleSeq()
-    {
+    selfRunningInterruptibleSeq() {
         Send("{LShift Down}") ; Hold down Left Shift
         Send("{Space Down}") ; Hold down Space
 
@@ -274,16 +279,14 @@ Flight()
         Sleep(DelayTime) ; Wait for DelayTime seconds before checking the toggle again
 
         ; check if the toggle is off to run post-conditions and end the function early
-        if !toggle
-        {
+        if !toggle {
             ShowStatus("Flight Mode Off")
             Send("{LShift Up}") ; Release Shift
             return ; end the function
         }
 
         ; check if the toggle is still on at the end to rerun the function
-        if toggle
-        {
+        if toggle {
             SetTimer(selfRunningInterruptibleSeq, -1) ; go again if the toggle is still active
         }
     }
