@@ -27,7 +27,7 @@ Since these macros run outside of the game engine, achievements aren't affected.
 | ---------------------- | ------------------------------------ | ------------------------------------------- |
 | Numpad Home, Left, End | Flight presets, High, Medium and low | Select before activating Flight mode        |
 | F2                     | Reactive Shield                      | Toggle auto-recast. Uses '6' as shortcut.   |
-| F3                     | Hold Space                           | Vertical take off                           |
+| F3                     | Hover Mode                           | Vertical take off                           |
 | F4                     | Continous Boost                      | Holds down Space and Shift                  |
 | F6                     | Hold Shift                           | Horizontal boost                            |
 | F7                     | Vehicle Flight Mode                  | Toggle flight mode. Adjustable parameters.  |

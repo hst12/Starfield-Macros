@@ -200,19 +200,9 @@ ShowParams(msg) {
     }
 }
 
-*F3:: ; Hold Space
+*F3:: ; Tap Space with delays
 {
-    static SpaceToggle := false
-    SpaceToggle := !SpaceToggle ; Toggle the state of Space
-
-    if SpaceToggle {
-        SendEvent("{Space Down}") ; Hold down Space
-        ShowStatus("Vertical Boost On")
-    }
-    else {
-        SendEvent("{Space Up}") ; Release Space
-        ShowStatus("Vertical Boost Off")
-    }
+    Hover()
 }
 
 *F6:: ; Hold Shift
@@ -282,6 +272,35 @@ Flight() {
         if !toggle {
             ShowStatus("Flight Mode Off")
             Send("{LShift Up}") ; Release Shift
+            return ; end the function
+        }
+
+        ; check if the toggle is still on at the end to rerun the function
+        if toggle {
+            SetTimer(selfRunningInterruptibleSeq, -1) ; go again if the toggle is still active
+        }
+    }
+}
+
+Hover() {
+    global flightTime, DelayTime
+    static toggle := false ; declare the toggle
+    toggle := !toggle ; flip the toggle
+    if toggle {
+        ShowStatus("Hover Mode On")
+        SetTimer(selfRunningInterruptibleSeq, -1) ; run the function once immediately
+    }
+
+    selfRunningInterruptibleSeq() {
+        Send("{Space Down}") ; Hold down Space
+
+        Sleep flightTime ; Keep space key held down for DelayTime ms
+        Send("{Space Up}") ; Release Space
+        Sleep(DelayTime) ; Wait for DelayTime seconds before checking the toggle again
+
+        ; check if the toggle is off to run post-conditions and end the function early
+        if !toggle {
+            ShowStatus("Hover Mode Off")
             return ; end the function
         }
 
