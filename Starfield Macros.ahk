@@ -130,6 +130,22 @@ ShowParams(msg) {
     ShowStatus("Flight Parameters Recalled")
 }
 
+*NumpadAdd:: ; Increase flight step
+{
+    global FlightStep, DelayStep
+    FlightStep := 150
+    DelayStep := 150
+    ShowStatus("Flight/Delay Step Increased to 150 ms")
+}
+
+*NumpadEnter:: ; Default flight steps
+{
+    global FlightStep, DelayStep
+    FlightStep := 50
+    DelayStep := 50
+    ShowStatus("Flight/Delay Step Reset to 50 ms")
+}
+
 *NumpadPgup:: ; Reduce delay time
 {
     global DelayTime
