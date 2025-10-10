@@ -133,9 +133,9 @@ ShowParams(msg) {
 *NumpadAdd:: ; Increase flight step
 {
     global FlightStep, DelayStep
-    FlightStep := 150
-    DelayStep := 150
-    ShowStatus("Flight/Delay Step Increased to 150 ms")
+    FlightStep := 200
+    DelayStep := 200
+    ShowStatus("Flight/Delay Step Increased to " . FlightStep . " ms")
 }
 
 *NumpadEnter:: ; Default flight steps
@@ -169,14 +169,14 @@ ShowParams(msg) {
 *NumpadUp:: ; Increase boost time
 {
     global flightTime, DelayTime
-    if flightTime < MaxFlightTime {
+    if flightTime < MaxFlightTime
         flightTime := flightTime + FlightStep ; increase flight time
+    if FlightTime > MaxFlightTime
+        flightTime := MaxFlightTime ; ensure flight time does not go above maximum
+    if DelayTime > MinDelayTime
         DelayTime := DelayTime - DelayStep ; increase flight wait time
-        if DelayTime < MinDelayTime
-            DelayTime := MinDelayTime ; ensure wait time does not go below minimum
-    }
-    else
-        flightTime := MaxFlightTime ; reset to default flight time if neither key is pressed
+    if DelayTime < MinDelayTime
+        DelayTime := MinDelayTime ; ensure wait time does not go below minimum
 
     ShowStatus("Vertical Boost: " . flightTime . " ms " . "Delay: " . DelayTime .
         " ms") ; display current flight time
@@ -185,14 +185,14 @@ ShowParams(msg) {
 *NumpadDown:: ; Decrease boost time
 {
     global flightTime, DelayTime
-    if flightTime > MinFlightTime {
+    if flightTime > MinFlightTime
         flightTime := flightTime - FlightStep ; reduce flight time
+    if flightTime < MinFlightTime
+        flightTime := MinFlightTime ; ensure flight time does not go below minimum
+    if DelayTime < MaxDelayTime
         DelayTime := DelayTime + DelayStep ; increase flight wait time
-        if DelayTime > MaxDelayTime
-            DelayTime := MaxDelayTime ; ensure wait time does not go above maximum
-    }
-    else
-        flightTime := MinFlightTime ; set minimum flight time to 1 second
+    if DelayTime > MaxDelayTime
+        DelayTime := MaxDelayTime ; ensure wait time does not go above maximum
 
     ShowStatus("Vertical Boost: " . flightTime . " ms " . "Delay: " . DelayTime .
         " ms") ; display current flight time
