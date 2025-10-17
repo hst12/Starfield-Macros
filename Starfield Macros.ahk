@@ -146,6 +146,11 @@ ShowParams(msg) {
     ShowStatus("Flight/Delay Step Reset to 50 ms")
 }
 
+*NumpadDel:: ; Drop down a bit
+{
+    Send("{Space Up}")
+}
+
 *NumpadPgup:: ; Reduce delay time
 {
     global DelayTime

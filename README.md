@@ -36,8 +36,9 @@ Since these macros run outside of the game engine, achievements aren't affected.
 | Numeric Keypad /       | Store flight parameters              |                                             |
 | Numeric Keypad *       | Show flight parameters               |                                             |
 | Numeric Keypad -       | Recall flight parameters             |                                             |
-| Numeric Keypad +       | Set flight and delay time to 150     |                                             |
+| Numeric Keypad +       | Set flight and delay time to 200     |                                             |
 | Numeric Keypad Enter   | Set flight and delay time to 50      |                                             |
+| Numeric Keypad Delete  | Release space                        | Tap briefly or hold down to drop altitude   |
 
 
 
