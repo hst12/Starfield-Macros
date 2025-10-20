@@ -148,6 +148,16 @@ ShowParams(msg) {
 
 *NumpadDel:: ; Drop down a bit
 {
+    ShowStatus("Drop Down 1 second")
+    Send("{Space Up}")
+    Sleep 1000
+}
+
+*NumpadIns:: ; Raise up a bit
+{
+    ShowStatus("Hover 3 seconds")
+    Send("{Space Down}")
+    Sleep 3000
     Send("{Space Up}")
 }
 
