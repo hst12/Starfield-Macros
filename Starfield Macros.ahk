@@ -45,6 +45,7 @@ StoredDelayStep := DelayStep
 ; Mode state flags (make hover/flight mutually exclusive)
 FlightModeActive := false
 HoverModeActive := false
+ContinuousActive := false
 
 ; End of parameters, start of code below
 ; ======================================
@@ -90,20 +91,44 @@ ShowParams(msg) {
 
 *F4:: ; Continuous Boost (Space + Shift)
 {
-    static MaxToggle := false
-    MaxToggle := !MaxToggle ; Toggle the state of Space/Shift
-
-    if MaxToggle {
-        SendEvent("{Space Down}") ; Hold down Space
-        SendEvent("{LShift Down}") ; Hold down Left Shift
+    global FlightModeActive, HoverModeActive, ContinuousActive
+    ContinuousActive := !ContinuousActive
+    ; If enabling Continuous, disable Flight and Hover if it is active
+    if ContinuousActive {
+        HoverModeActive := false
+        FlightModeActive := false
+        ;Send("{Space Up}")
+        ;Send("{LShift Up}")
+        ;ShowStatus("Flight Mode Cancelled")
+        Send("{Space Down}") ; Hold down Space
+        Send("{LShift Down}") ; Hold down Left Shift
         ShowStatus("Continuous Boost")
+        SetTimer(selfRunningInterruptibleSeq, -1) ; run the function once immediately
     }
     else {
-        SendEvent("{Space Up}") ; Release Space
-        SendEvent("{LShift Up}") ; Release Left Shift
-
+        Send("{Space Up}") ; Release Space
+        Send("{LShift Up}") ; Release Left Shift
         ShowStatus("Continuous Boost Off")
     }
+
+    selfRunningInterruptibleSeq() {
+        Send("{LShift Down}") ; Hold down Left Shift
+        Send("{Space Down}") ; Hold down Space
+
+        ; check if the flight flag was turned off to run post-conditions and end the function early
+        if !ContinuousActive {
+            ShowStatus("Continuous Mode Off")
+            Send("{LShift Up}") ; Release Shift
+            Send("{Space Up}") ; Ensure Space released
+            return ; end the function
+        }
+
+        ; check if the flight flag is still on at the end to rerun the function
+        if ContinuousActive {
+            SetTimer(selfRunningInterruptibleSeq, -1) ; go again if the flag is still active
+        }
+    }
+
 }
 
 *NumpadRight:: ; Minimum Flight Wait Time
@@ -121,7 +146,7 @@ ShowParams(msg) {
 
 *NumpadDiv:: ; Store flight parameters
 {
-    global StoredFlightTime, StoredDelayTime, StoredDelayStep,FlightTime, DelayTime
+    global StoredFlightTime, StoredDelayTime, StoredDelayStep, FlightTime, DelayTime
 
     StoredFlightTime := FlightTime
     StoredDelayTime := DelayTime
@@ -130,12 +155,13 @@ ShowParams(msg) {
 }
 *NumpadSub:: ; Recall stored flight parameters
 {
-    global StoredFlightTime, StoredDelayTime, StoredDelayStep,FlightTime, DelayTime,DelayStep
+    global StoredFlightTime, StoredDelayTime, StoredDelayStep, FlightTime, DelayTime, DelayStep
 
     FlightTime := StoredFlightTime
     DelayTime := StoredDelayTime
     DelayStep := StoredDelayStep
-    ShowStatus("Flight Time: " . FlightTime . " ms" . " Delay Time: " . DelayTime . " ms" . " Delay Step: " . DelayStep . " ms")
+    ShowStatus("Flight Time: " . FlightTime . " ms" . " Delay Time: " . DelayTime . " ms" . " Delay Step: " . DelayStep .
+        " ms")
 }
 
 *NumpadAdd:: ; Increase flight step
@@ -148,7 +174,7 @@ ShowParams(msg) {
 
 *NumpadEnter:: ; Default flight steps
 {
-    global FlightStep, DelayStep, DefaultDelayStep,DefaultFlightStep
+    global FlightStep, DelayStep, DefaultDelayStep, DefaultFlightStep
     FlightStep := DefaultFlightStep
     DelayStep := DefaultDelayStep
     ShowStatus("Flight/Delay Step Reset to " . FlightStep . " ms" . " / " . DelayStep . " ms")
@@ -293,7 +319,7 @@ ShowParams(msg) {
 ; This function toggles flight mode on and off, allowing for extended flight duration in vehicles. Requires a suitably modded vehicle.
 
 Flight() {
-    global FlightModeActive, HoverModeActive, flightTime, DelayTime
+    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime
     ; toggle the flight mode flag
     FlightModeActive := !FlightModeActive
 
@@ -304,6 +330,13 @@ Flight() {
             ; ensure Space is released from Hover
             Send("{Space Up}")
             ShowStatus("Hover Mode Cancelled")
+        }
+        if ContinuousActive {
+            ContinuousActive := false
+            ; ensure Space/Shift is released from Continuous
+            Send("{Space Up}")
+            Send("{LShift Up}")
+            ShowStatus("Continuous Boost Cancelled")
         }
         ShowStatus("Flight Mode On")
         SetTimer(selfRunningInterruptibleSeq, -1) ; run the function once immediately
@@ -333,7 +366,7 @@ Flight() {
 }
 
 Hover() {
-    global FlightModeActive, HoverModeActive, flightTime, DelayTime
+    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime
     ; toggle the hover mode flag
     HoverModeActive := !HoverModeActive
 
@@ -343,7 +376,15 @@ Hover() {
             FlightModeActive := false
             ; ensure Shift is released from Flight
             Send("{LShift Up}")
+            Send("{Space Up}")
             ShowStatus("Flight Mode Cancelled")
+        }
+        if ContinuousActive {
+            ContinuousActive := false
+            ; ensure Space/Shift is released from Continuous
+            Send("{Space Up}")
+            Send("{LShift Up}")
+            ShowStatus("Continuous Boost Cancelled")
         }
         ShowStatus("Hover Mode On")
         SetTimer(selfRunningInterruptibleSeq, -1) ; run the function once immediately
