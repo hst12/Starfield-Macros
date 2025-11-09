@@ -49,6 +49,7 @@ Since these macros run outside of the game engine, achievements aren't affected.
 * **NumpadPgUp/PgDn:** Increase/Decrease delay time
 * **NumpadEnd/Left/Home:** Preset gravities (Low/Medium/High)
 * **NumpadRight:** Flight delay zero
+* Switch between Hover and Flight modes by pressing the hotkey. Modes will cancel each other out.
 
 ### 
 
