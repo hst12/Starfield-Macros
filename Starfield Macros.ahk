@@ -29,15 +29,22 @@ InvisibilityKey := 9
 ; Flight Parameters
 MaxFlightTime := 1000 ; Maximum flight time in ms
 MinFlightTime := 100 ; Minimum flight time in ms
-FlightStep := 50 ; Step size for flight time adjustment in ms
+DefaultFlightStep := 50
+FlightStep := DefaultFlightStep ; Step size for flight time adjustment in ms
 DefaultFlightTime := 2000 ; Default flight time in ms
+DefaultDelayStep := 50
+DelayStep := DefaultDelayStep ; Step size for delay time adjustment in ms
 MinDelayTime := 0 ; Minimum wait time in ms
 MaxDelayTime := 2000 ; Maximum wait time in ms
 DelayTime := MinDelayTime ; Wait time after flight before checking toggle again
-DelayStep := 50 ; Step size for delay time adjustment in ms
 FlightTime := DefaultFlightTime ; Set initial flight time to default
 StoredFlightTime := FlightTime
 StoredDelayTime := DelayTime
+StoredDelayStep := DelayStep
+
+; Mode state flags (make hover/flight mutually exclusive)
+FlightModeActive := false
+HoverModeActive := false
 
 ; End of parameters, start of code below
 ; ======================================
@@ -97,7 +104,6 @@ ShowParams(msg) {
 
         ShowStatus("Continuous Boost Off")
     }
-
 }
 
 *NumpadRight:: ; Minimum Flight Wait Time
@@ -115,19 +121,21 @@ ShowParams(msg) {
 
 *NumpadDiv:: ; Store flight parameters
 {
-    global StoredFlightTime, StoredDelayTime, FlightTime, DelayTime
+    global StoredFlightTime, StoredDelayTime, StoredDelayStep,FlightTime, DelayTime
 
     StoredFlightTime := FlightTime
     StoredDelayTime := DelayTime
+    StoredDelayStep := DelayStep
     ShowStatus("Flight Parameters Stored")
 }
 *NumpadSub:: ; Recall stored flight parameters
 {
-    global StoredFlightTime, StoredDelayTime, FlightTime, DelayTime
+    global StoredFlightTime, StoredDelayTime, StoredDelayStep,FlightTime, DelayTime,DelayStep
 
     FlightTime := StoredFlightTime
     DelayTime := StoredDelayTime
-    ShowStatus("Flight Parameters Recalled")
+    DelayStep := StoredDelayStep
+    ShowStatus("Flight Time: " . FlightTime . " ms" . " Delay Time: " . DelayTime . " ms" . " Delay Step: " . DelayStep . " ms")
 }
 
 *NumpadAdd:: ; Increase flight step
@@ -140,25 +148,27 @@ ShowParams(msg) {
 
 *NumpadEnter:: ; Default flight steps
 {
-    global FlightStep, DelayStep
-    FlightStep := 50
-    DelayStep := 50
-    ShowStatus("Flight/Delay Step Reset to 50 ms")
+    global FlightStep, DelayStep, DefaultDelayStep,DefaultFlightStep
+    FlightStep := DefaultFlightStep
+    DelayStep := DefaultDelayStep
+    ShowStatus("Flight/Delay Step Reset to " . FlightStep . " ms" . " / " . DelayStep . " ms")
 }
 
 *NumpadDel:: ; Drop down a bit
 {
-    ShowStatus("Drop Down 1 second")
+    ToolTip("Descreasing altitude for 1 second", A_ScreenWidth - 200, A_ScreenHeight - 60) ; Display at bottom right hand corner of screen
     Send("{Space Up}")
     Sleep 1000
+    ToolTip()
 }
 
 *NumpadIns:: ; Raise up a bit
 {
-    ShowStatus("Hover 3 seconds")
+    ToolTip("Increasing altitude for 3 seconds", A_ScreenWidth - 200, A_ScreenHeight - 60) ; Display at bottom right hand corner of screen
     Send("{Space Down}")
     Sleep 3000
     Send("{Space Up}")
+    ToolTip()
 }
 
 *NumpadPgup:: ; Reduce delay time
@@ -283,10 +293,18 @@ ShowParams(msg) {
 ; This function toggles flight mode on and off, allowing for extended flight duration in vehicles. Requires a suitably modded vehicle.
 
 Flight() {
-    global flightTime, DelayTime
-    static toggle := false ; declare the toggle
-    toggle := !toggle ; flip the toggle
-    if toggle {
+    global FlightModeActive, HoverModeActive, flightTime, DelayTime
+    ; toggle the flight mode flag
+    FlightModeActive := !FlightModeActive
+
+    ; If enabling Flight, disable Hover if it is active
+    if FlightModeActive {
+        if HoverModeActive {
+            HoverModeActive := false
+            ; ensure Space is released from Hover
+            Send("{Space Up}")
+            ShowStatus("Hover Mode Cancelled")
+        }
         ShowStatus("Flight Mode On")
         SetTimer(selfRunningInterruptibleSeq, -1) ; run the function once immediately
     }
@@ -299,25 +317,34 @@ Flight() {
         Send("{Space Up}") ; Release Space
         Sleep(DelayTime) ; Wait for DelayTime seconds before checking the toggle again
 
-        ; check if the toggle is off to run post-conditions and end the function early
-        if !toggle {
+        ; check if the flight flag was turned off to run post-conditions and end the function early
+        if !FlightModeActive {
             ShowStatus("Flight Mode Off")
             Send("{LShift Up}") ; Release Shift
+            Send("{Space Up}") ; Ensure Space released
             return ; end the function
         }
 
-        ; check if the toggle is still on at the end to rerun the function
-        if toggle {
-            SetTimer(selfRunningInterruptibleSeq, -1) ; go again if the toggle is still active
+        ; check if the flight flag is still on at the end to rerun the function
+        if FlightModeActive {
+            SetTimer(selfRunningInterruptibleSeq, -1) ; go again if the flag is still active
         }
     }
 }
 
 Hover() {
-    global flightTime, DelayTime
-    static toggle := false ; declare the toggle
-    toggle := !toggle ; flip the toggle
-    if toggle {
+    global FlightModeActive, HoverModeActive, flightTime, DelayTime
+    ; toggle the hover mode flag
+    HoverModeActive := !HoverModeActive
+
+    ; If enabling Hover, disable Flight if it is active
+    if HoverModeActive {
+        if FlightModeActive {
+            FlightModeActive := false
+            ; ensure Shift is released from Flight
+            Send("{LShift Up}")
+            ShowStatus("Flight Mode Cancelled")
+        }
         ShowStatus("Hover Mode On")
         SetTimer(selfRunningInterruptibleSeq, -1) ; run the function once immediately
     }
@@ -329,15 +356,16 @@ Hover() {
         Send("{Space Up}") ; Release Space
         Sleep(DelayTime) ; Wait for DelayTime seconds before checking the toggle again
 
-        ; check if the toggle is off to run post-conditions and end the function early
-        if !toggle {
+        ; check if the hover flag was turned off to run post-conditions and end the function early
+        if !HoverModeActive {
             ShowStatus("Hover Mode Off")
+            Send("{Space Up}") ; Ensure Space released
             return ; end the function
         }
 
-        ; check if the toggle is still on at the end to rerun the function
-        if toggle {
-            SetTimer(selfRunningInterruptibleSeq, -1) ; go again if the toggle is still active
+        ; check if the hover flag is still on at the end to rerun the function
+        if HoverModeActive {
+            SetTimer(selfRunningInterruptibleSeq, -1) ; go again if the flag is still active
         }
     }
 }
