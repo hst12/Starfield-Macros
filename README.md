@@ -66,7 +66,7 @@ Since these macros run outside of the game engine, achievements aren't affected.
 
 
 
-1. Download or copy `Starfield Macros.ahk` to your PC.
+1. Download `Starfield Macros.ahk` to your PC.
 2. Set your in-game power shortcuts to match the script (default: '6' for shield, '9' for Void Form).
 3. Run the script with AutoHotkey v2.0 or create a compiled version
 4. Use the hotkeys in-game while Starfield is the active window.
