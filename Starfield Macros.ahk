@@ -97,9 +97,6 @@ ShowParams(msg) {
     if ContinuousActive {
         HoverModeActive := false
         FlightModeActive := false
-        ;Send("{Space Up}")
-        ;Send("{LShift Up}")
-        ;ShowStatus("Flight Mode Cancelled")
         Send("{Space Down}") ; Hold down Space
         Send("{LShift Down}") ; Hold down Left Shift
         ShowStatus("Continuous Boost")
@@ -294,6 +291,9 @@ ShowParams(msg) {
     SetCapsLockState false
     SetNumLockState false
     SetScrollLockState false
+    FlightModeActive := false
+    HoverModeActive := false
+    ContinuousActive := false
     ShowStatus("Keys Released")
 }
 
