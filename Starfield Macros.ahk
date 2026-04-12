@@ -27,12 +27,12 @@ ReactiveShieldKey := 6
 InvisibilityKey := 9
 
 ; Flight Parameters
-MaxFlightTime := 1000 ; Maximum flight time in ms
+MaxFlightTime := 1500 ; Maximum flight time in ms Note: previously at 1000
 MinFlightTime := 100 ; Minimum flight time in ms
 DefaultFlightStep := 50
 FlightStep := DefaultFlightStep ; Step size for flight time adjustment in ms
 DefaultFlightTime := 2000 ; Default flight time in ms
-DefaultDelayStep := 50
+DefaultDelayStep := 100
 DelayStep := DefaultDelayStep ; Step size for delay time adjustment in ms
 MinDelayTime := 0 ; Minimum wait time in ms
 MaxDelayTime := 2000 ; Maximum wait time in ms
@@ -76,16 +76,16 @@ ShowParams(msg) {
 *NumpadLeft:: ; Medium Preset
 {
     global FlightTime, DelayTime
-    FlightTime := MaxFlightTime - (MaxFlightTime // 5)
-    DelayTime := MaxDelayTime // 4
+    FlightTime := MaxFlightTime - (MaxFlightTime // 3)
+    DelayTime := MaxDelayTime // 3
     ShowParams("Medium Preset ")
 }
 
 *NumpadHome:: ; High Preset
 {
     global FlightTime, DelayTime
-    FlightTime := MaxFlightTime
-    DelayTime := MinDelayTime
+    FlightTime := MaxFlightTime - (MaxFlightTime //6)
+    DelayTime := MaxDelayTime // 6
     ShowParams("High Preset ")
 }
 
@@ -157,7 +157,7 @@ ShowParams(msg) {
     FlightTime := StoredFlightTime
     DelayTime := StoredDelayTime
     DelayStep := StoredDelayStep
-    ShowStatus("Flight Time: " . FlightTime . " ms" . " Delay Time: " . DelayTime . " ms" . " Delay Step: " . DelayStep .
+    ShowStatus("Recall Parameters - Flight Time: " . FlightTime . " ms" . " Delay Time: " . DelayTime . " ms" . " Delay Step: " . DelayStep .
         " ms")
 }
 
@@ -271,14 +271,23 @@ ShowParams(msg) {
 
 *F6:: ; Hold Shift
 {
+    global FlightModeActive,HoverModeActive,ContinuousActive
     static ShiftToggle := false
+ 
     ShiftToggle := !ShiftToggle ; Toggle the state of Shift
 
-    if ShiftToggle {
+    if ShiftToggle
+    {
+        FlightModeActive := false
+        HoverModeActive := false
+        ContinuousActive := false
+        Send("{Space Up}")
+        Send("{LShift Up}")
         SendEvent("{LShift Down}") ; Hold down Left Shift
         ShowStatus("Horizontal Boost On")
     }
-    else {
+    else
+    {
         SendEvent("{LShift Up}") ; Release Left Shift
         ShowStatus("Horizontal Boost Off")
     }
@@ -286,6 +295,8 @@ ShowParams(msg) {
 
 *F11:: ;Release any held keys
 {
+    global FlightModeActive,HoverModeActive,ContinuousActive
+    
     Send("{LShift Up}") ; Release Shift
     Send("{Space Up}") ; Release Space
     SetCapsLockState false
@@ -319,9 +330,11 @@ ShowParams(msg) {
 ; This function toggles flight mode on and off, allowing for extended flight duration in vehicles. Requires a suitably modded vehicle.
 
 Flight() {
-    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime
+    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime,ShiftToggle
     ; toggle the flight mode flag
     FlightModeActive := !FlightModeActive
+    if FlightModeActive
+        ShiftToggle := false
 
     ; If enabling Flight, disable Hover if it is active
     if FlightModeActive {
@@ -366,9 +379,17 @@ Flight() {
 }
 
 Hover() {
-    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime
+    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime,ShiftToggle :=false
     ; toggle the hover mode flag
     HoverModeActive := !HoverModeActive
+    if HoverModeActive
+    {
+        if ShiftToggle
+        {
+            ShiftToggle := false
+            Send("{LShift Up}")
+        }
+    }
 
     ; If enabling Hover, disable Flight if it is active
     if HoverModeActive {
