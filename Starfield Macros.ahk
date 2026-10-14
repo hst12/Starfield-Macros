@@ -30,13 +30,14 @@ InvisibilityKey := 9
 MaxFlightTime := 1500 ; Maximum flight time in ms Note: previously at 1000
 MinFlightTime := 100 ; Minimum flight time in ms
 DefaultFlightStep := 50
-FlightStep := DefaultFlightStep ; Step size for flight time adjustment in ms
-DefaultFlightTime := 2000 ; Default flight time in ms
+FlightStep := 200 ; Step size for flight time adjustment in ms
+DefaultFlightTime := MaxFlightTime - (MaxFlightTime // 3) ; Default flight time in ms
+FlightTime := MaxFlightTime - (MaxFlightTime // 3)
 DefaultDelayStep := 100
-DelayStep := DefaultDelayStep ; Step size for delay time adjustment in ms
+DelayStep := 200 ; Step size for delay time adjustment in ms
 MinDelayTime := 0 ; Minimum wait time in ms
 MaxDelayTime := 2000 ; Maximum wait time in ms
-DelayTime := MinDelayTime ; Wait time after flight before checking toggle again
+DelayTime := MaxDelayTime // 3 ; Wait time after flight before checking toggle again
 FlightTime := DefaultFlightTime ; Set initial flight time to default
 StoredFlightTime := FlightTime
 StoredDelayTime := DelayTime
@@ -84,7 +85,7 @@ ShowParams(msg) {
 *NumpadHome:: ; High Preset
 {
     global FlightTime, DelayTime
-    FlightTime := MaxFlightTime - (MaxFlightTime //6)
+    FlightTime := MaxFlightTime - (MaxFlightTime // 6)
     DelayTime := MaxDelayTime // 6
     ShowParams("High Preset ")
 }
@@ -179,17 +180,17 @@ ShowParams(msg) {
 
 *NumpadDel:: ; Drop down a bit
 {
-    ToolTip("Descreasing altitude for 1 second", A_ScreenWidth - 200, A_ScreenHeight - 60) ; Display at bottom right hand corner of screen
+    ToolTip("Descreasing altitude for 500 ms", A_ScreenWidth - 200, A_ScreenHeight - 60) ; Display at bottom right hand corner of screen
     Send("{Space Up}")
-    Sleep 1000
+    Sleep 500
     ToolTip()
 }
 
 *NumpadIns:: ; Raise up a bit
 {
-    ToolTip("Increasing altitude for 3 seconds", A_ScreenWidth - 200, A_ScreenHeight - 60) ; Display at bottom right hand corner of screen
+    ToolTip("Increasing altitude for 2 seconds", A_ScreenWidth - 200, A_ScreenHeight - 60) ; Display at bottom right hand corner of screen
     Send("{Space Down}")
-    Sleep 3000
+    Sleep 2000
     Send("{Space Up}")
     ToolTip()
 }
@@ -271,9 +272,14 @@ ShowParams(msg) {
 
 *F6:: ; Hold Shift
 {
-    global FlightModeActive,HoverModeActive,ContinuousActive
+    Boost()
+}
+
+Boost()
+{
+    global FlightModeActive, HoverModeActive, ContinuousActive
     static ShiftToggle := false
- 
+
     ShiftToggle := !ShiftToggle ; Toggle the state of Shift
 
     if ShiftToggle
@@ -293,10 +299,15 @@ ShowParams(msg) {
     }
 }
 
+*F10:: ; Exit
+{
+    ExitApp
+}
+
 *F11:: ;Release any held keys
 {
-    global FlightModeActive,HoverModeActive,ContinuousActive
-    
+    global FlightModeActive, HoverModeActive, ContinuousActive
+
     Send("{LShift Up}") ; Release Shift
     Send("{Space Up}") ; Release Space
     SetCapsLockState false
@@ -330,11 +341,13 @@ ShowParams(msg) {
 ; This function toggles flight mode on and off, allowing for extended flight duration in vehicles. Requires a suitably modded vehicle.
 
 Flight() {
-    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime,ShiftToggle
+    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime, ShiftToggle
     ; toggle the flight mode flag
     FlightModeActive := !FlightModeActive
-    if FlightModeActive
+    if FlightModeActive {
         ShiftToggle := false
+        Send("{LShift Up}")
+    }
 
     ; If enabling Flight, disable Hover if it is active
     if FlightModeActive {
@@ -351,6 +364,11 @@ Flight() {
             Send("{LShift Up}")
             ShowStatus("Continuous Boost Cancelled")
         }
+        if ShiftToggle
+        {
+            Boost()
+        }
+
         ShowStatus("Flight Mode On")
         SetTimer(selfRunningInterruptibleSeq, -1) ; run the function once immediately
     }
@@ -379,15 +397,14 @@ Flight() {
 }
 
 Hover() {
-    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime,ShiftToggle :=false
+    global FlightModeActive, HoverModeActive, ContinuousActive, flightTime, DelayTime, ShiftToggle := false
     ; toggle the hover mode flag
     HoverModeActive := !HoverModeActive
     if HoverModeActive
     {
         if ShiftToggle
         {
-            ShiftToggle := false
-            Send("{LShift Up}")
+            Boost()
         }
     }
 
